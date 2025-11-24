@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Exemplo Async/Await</title>
+</head>
+<body>
+    <h1>Detalhes do Produto</h1>
+
+    <label for="campoNome">Nome do Produto:</label>
+    <input type="text" id="campoNome" readonly><br><br>
+
+    <label for="campoPreco">Preço (R$):</label>
+    <input type="text" id="campoPreco" readonly><br><br>
+
+    <button onclick="carregarDados()">Carregar Dados</button>
+
+    <script>
+        // Função que SIMULA a busca de dados
+        function buscarDadosJSON() {
+            // Linha 1: Retorna uma Promise que resolve após 1 segundo (simulando um atraso de rede)
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    // Simula os dados que viriam do arquivo JSON
+                    const dados = {
+                        "id": 101,
+                        "nomeProduto": "Laptop Ultra",
+                        "preco": 4500.50
+                    };
+                    resolve(dados); // Resolve a Promise com os dados
+                }, 1000);
+            });
+        }
+
+        // Linha 2: Define a função principal como assíncrona usando 'async'
+        async function carregarDados() {
+            try {
+                // Linha 3: Obtém a referência aos campos de texto no HTML
+                const campoNome = document.getElementById('campoNome');
+                const campoPreco = document.getElementById('campoPreco');
+
+                // Linha 4: Limpa os campos enquanto espera
+                campoNome.value = 'Carregando...';
+                campoPreco.value = 'Carregando...';
+
+                // Linha 5: O 'await' pausa a execução ATÉ que a Promise de 'buscarDadosJSON' resolva (1 segundo depois)
+                const produto = await buscarDadosJSON();
+
+                // Linha 6: O código abaixo só é executado DEPOIS que a Promise for resolvida
+                
+                // Linha 7: Preenche os campos de texto com os dados do objeto 'produto'
+                campoNome.value = produto.nomeProduto;
+                campoPreco.value = produto.preco.toFixed(2); // Formata o preço
+
+            } catch (erro) {
+                // Linha 8: Captura e trata qualquer erro que possa ocorrer na operação
+                console.error("Erro ao carregar dados:", erro);
+                document.getElementById('campoNome').value = 'Erro!';
+                document.getElementById('campoPreco').value = 'Erro!';
+            }
+        }
+    </script>
+</body>
+</html>
